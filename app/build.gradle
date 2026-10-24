@@ -1,0 +1,65 @@
+// build.gradle (Module: app)
+plugins {
+    id 'com.android.application'
+}
+
+def jmeVer = '3.6.1-stable'
+
+android {
+    namespace 'com.miempresa.mifpsgame'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.miempresa.mifpsgame"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    // Los assets de jME y el audio deben quedar sin comprimir en el APK
+    androidResources {
+        noCompress 'j3o', 'j3m', 'j3md', 'bvhist', 'mesh.xml', 'skeleton.xml',
+                   'wav', 'ogg', 'mp3', 'png', 'jpg'
+    }
+
+    // Para firmar (seccion 13.1 del manual): crea tu keystore y descomenta
+    // signingConfigs {
+    //     release {
+    //         storeFile file("../mi-keystore.jks")
+    //         storePassword "TU_PASSWORD"
+    //         keyAlias "mi_alias"
+    //         keyPassword "TU_PASSWORD"
+    //     }
+    // }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                          'proguard-rules.pro'
+            // signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    // jMonkeyEngine Core
+    implementation "org.jmonkeyengine:jme3-core:$jmeVer"
+    implementation "org.jmonkeyengine:jme3-android:$jmeVer"
+    implementation "org.jmonkeyengine:jme3-android-native:$jmeVer"
+    // Fisica con Bullet: desde jME 3.4 ya no existen jme3-bullet / jme3-bullet-native-android
+    // en Maven Central. Se usa Minie (compatible con jME 3.6.1); la variante "+droid"
+    // trae los binarios nativos de Android incluidos.
+    implementation 'com.github.stephengold:Minie:7.8.1+droid'
+
+    // Efectos visuales
+    implementation "org.jmonkeyengine:jme3-effects:$jmeVer"
+    // NOTA: el audio en Android ya viene dentro de jme3-android
+    // (no existe el artefacto jme3-android-audio).
+}
